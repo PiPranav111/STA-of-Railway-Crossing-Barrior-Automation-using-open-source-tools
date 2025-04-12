@@ -1,0 +1,20 @@
+# Read the original FSM Verilog
+read_verilog railway_crossing_fsm.v
+
+# Synthesize the FSM to logic gates
+synth -top railway_crossing_fsm
+
+# Convert all flip-flops to DFF (removes DFFSR)
+techmap -map +/techmap.v
+techmap -map +/adff2dff.v
+
+# Map flip-flops to the standard cell library
+dfflibmap -liberty osu018_stdcells.lib
+
+# Perform additional optimization
+abc -liberty osu018_stdcells.lib
+opt
+
+# Write a new, cleaned-up netlist
+write_verilog synth_railway_crossing_fixed.v
+
